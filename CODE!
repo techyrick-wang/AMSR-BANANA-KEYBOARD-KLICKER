@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>3D Banana Wax ASMR</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #fff7b3, #ffd84d 35%, #c88800 72%, #4a2c00);
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    .screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      padding: 20px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      color: #3b2500;
+      font-size: 42px;
+      text-shadow: 0 3px rgba(255,255,255,0.5);
+      text-align: center;
+    }
+
+    .subtitle {
+      color: #4a3100;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 15px;
+    }
+
+    .main {
+      display: flex;
+      gap: 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: stretch;
+      perspective: 900px;
+    }
+
+    .board {
+      width: 790px;
+      max-width: 92vw;
+      background: linear-gradient(180deg, #ffe96b, #ffc728 50%, #bd7600);
+      border: 8px solid #3f2700;
+      border-radius: 42px;
+      padding: 32px 24px;
+      box-shadow:
+        inset 0 12px 18px rgba(255,255,255,0.5),
+        inset 0 -16px 22px rgba(70,35,0,0.4),
+        0 28px 50px rgba(0,0,0,0.38);
+      transform: rotateX(7deg);
+    }
+
+    .row {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .banana-key {
+      width: 112px;
+      height: 68px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.06s;
+      outline: none;
+    }
+
+    .banana-key:nth-child(odd) {
+      transform: rotate(-7deg);
+    }
+
+    .banana-key:nth-child(even) {
+      transform: rotate(7deg);
+    }
+
+    .banana-top {
+      position: absolute;
+      inset: 0;
+      border-radius: 65% 35% 63% 37% / 58% 62% 38% 42%;
+      border: 4px solid #5b3500;
+      background:
+        radial-gradient(circle at 25% 18%, rgba(255,255,255,0.9), rgba(255,255,255,0.25) 18%, transparent 35%),
+        linear-gradient(180deg, #fff8a8, #ffe23b 38%, #ffc400 68%, #c87800);
+      box-shadow:
+        inset 0 8px 10px rgba(255,255,255,0.7),
+        inset 0 -10px 12px rgba(95,50,0,0.35),
+        0 9px 0 #8b5500,
+        0 15px 18px rgba(0,0,0,0.35);
+      color: #3c2500;
+      font-size: 25px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.055s, box-shadow 0.055s, filter 0.055s;
+    }
+
+    .banana-top::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 11px;
+      background: linear-gradient(180deg, #6b3f00, #301b00);
+      border-radius: 5px;
+      top: -7px;
+      left: 13px;
+      transform: rotate(-25deg);
+    }
+
+    .banana-top::after {
+      content: "";
+      position: absolute;
+      inset: 8px 18px 32px;
+      border-top: 4px solid rgba(255,255,255,0.55);
+      border-radius: 50%;
+      transform: rotate(-10deg);
+    }
+
+    .banana-side {
+      position: absolute;
+      left: 7px;
+      right: 7px;
+      bottom: -10px;
+      height: 24px;
+      border-radius: 0 0 45px 45px;
+      background: linear-gradient(180deg, #9e6200, #5b3500);
+      box-shadow: 0 13px 16px rgba(0,0,0,0.36);
+    }
+
+    .banana-key.pressed .banana-top {
+      transform: translateY(9px) scale(0.975);
+      box-shadow:
+        inset 0 4px 7px rgba(255,255,255,0.45),
+        inset 0 -4px 8px rgba(95,50,0,0.45),
+        0 2px 0 #8b5500,
+        0 5px 9px rgba(0,0,0,0.35);
+      filter: brightness(0.94);
+    }
+
+    .space-key {
+      width: 350px;
+      height: 74px;
+    }
+
+    .panel {
+      width: 250px;
+      max-width: 90vw;
+      border: 8px solid #4b2d00;
+      border-radius: 38px;
+      padding: 18px;
+      background: linear-gradient(180deg, #fff1b5, #ffd47b 36%, #e7ad4f 72%, #9b6125);
+      box-shadow:
+        inset 0 10px 16px rgba(255,255,255,0.45),
+        inset 0 -12px 18px rgba(90,50,0,0.35),
+        0 24px 40px rgba(0,0,0,0.35);
+      transform: rotateX(7deg);
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .wax-title {
+      color: #3f2700;
+      font-size: 25px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .wax-desc {
+      color: #563600;
+      font-size: 14px;
+      line-height: 1.35;
+      margin-bottom: 14px;
+    }
+
+    .wax-block {
+      width: 164px;
+      height: 260px;
+      margin: 0 auto;
+      border: 5px solid #8a561c;
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 35% 18%, rgba(255,255,255,0.65), transparent 28%),
+        linear-gradient(180deg, #fff7d3, #ffe29c 25%, #ffd276 60%, #e6ad58);
+      box-shadow:
+        inset 0 10px 14px rgba(255,255,255,0.5),
+        inset 0 -12px 14px rgba(120,75,20,0.25),
+        0 12px 0 #7b4814,
+        0 22px 28px rgba(0,0,0,0.32);
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.06s, box-shadow 0.06s;
+    }
+
+    .wax-block.pressed {
+      transform: translateY(10px) scale(0.98);
+      box-shadow:
+        inset 0 6px 10px rgba(255,255,255,0.35),
+        inset 0 -7px 10px rgba(120,75,20,0.35),
+        0 3px 0 #7b4814,
+        0 8px 13px rgba(0,0,0,0.35);
+    }
+
+    .wax-layer {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      height: 24px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(120,80,25,0.25);
+    }
+
+    .wax-layer.one { top: 22px; }
+    .wax-layer.two { top: 58px; }
+    .wax-layer.three { top: 94px; }
+    .wax-layer.four { top: 130px; }
+    .wax-layer.five { top: 166px; }
+
+    .wax-press {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      top: 28px;
+      height: 85px;
+      border-radius: 20px;
+      border: 2px solid rgba(130,85,30,0.4);
+      background: rgba(255,230,170,0.35);
+      transition: transform 0.08s, height 0.08s;
+    }
+
+    .wax-block.pressed .wax-press {
+      transform: translateY(24px);
+      height: 62px;
+    }
+
+    .crack {
+      position: absolute;
+      top: 36px;
+      left: 74px;
+      width: 4px;
+      height: 76px;
+      background: rgba(100,65,25,0.5);
+      border-radius: 30px;
+      transform: rotate(8deg);
+      box-shadow:
+        -18px 22px 0 -1px rgba(100,65,25,0.42),
+        19px 19px 0 -1px rgba(100,65,25,0.42),
+        -8px 45px 0 -1px rgba(100,65,25,0.36),
+        28px 52px 0 -1px rgba(100,65,25,0.32);
+      opacity: 0.58;
+    }
+
+    .wax-block.pressed .crack {
+      opacity: 1;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      background: rgba(255,255,255,0.5);
+      border: 3px solid rgba(65,40,0,0.45);
+      padding: 10px 16px;
+      border-radius: 999px;
+      color: #352200;
+      font-weight: bold;
+    }
+
+    .slider-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 18px;
+      color: #352200;
+      font-weight: bold;
+    }
+
+    input[type="range"] {
+      width: 230px;
+      accent-color: #3c2500;
+    }
+
+    .help {
+      margin-top: 16px;
+      color: #3f2a00;
+      font-size: 14px;
+      text-align: center;
+      max-width: 900px;
+      line-height: 1.45;
+    }
+
+    .spark {
+      position: fixed;
+      pointer-events: none;
+      font-size: 24px;
+      animation: pop 0.5s ease-out forwards;
+      z-index: 999;
+    }
+
+    @keyframes pop {
+      0% {
+        transform: translateY(0) scale(0.55);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(-58px) scale(1.4) rotate(22deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="screen">
+    <h1>🍌 3D Banana Wax ASMR</h1>
+    <div class="subtitle">3D banana keys + crackly wax bar. Click once to activate sound.</div>
+
+    <div class="main">
+      <div class="board">
+        <div class="row">
+          <button class="banana-key" data-key="Q"><div class="banana-side"></div><div class="banana-top">Q</div></button>
+          <button class="banana-key" data-key="W"><div class="banana-side"></div><div class="banana-top">W</div></button>
+          <button class="banana-key" data-key="E"><div class="banana-side"></div><div class="banana-top">E</div></button>
+          <button class="banana-key" data-key="R"><div class="banana-side"></div><div class="banana-top">R</div></button>
+          <button class="banana-key" data-key="T"><div class="banana-side"></div><div class="banana-top">T</div></button>
+        </div>
+
+        <div class="row">
+          <button class="banana-key" data-key="A"><div class="banana-side"></div><div class="banana-top">A</div></button>
+          <button class="banana-key" data-key="S"><div class="banana-side"></div><div class="banana-top">S</div></button>
+          <button class="banana-key" data-key="D"><div class="banana-side"></div><div class="banana-top">D</div></button>
+          <button class="banana-key" data-key="F"><div class="banana-side"></div><div class="banana-top">F</div></button>
+        </div>
+
+        <div class="row">
+          <button class="banana-key" data-key="Z"><div class="banana-side"></div><div class="banana-top">Z</div></button>
+          <button class="banana-key" data-key="X"><div class="banana-side"></div><div class="banana-top">X</div></button>
+          <button class="banana-key" data-key="C"><div class="banana-side"></div><div class="banana-top">C</div></button>
+        </div>
+
+        <div class="row">
+          <button class="banana-key space-key" data-key="SPACE"><div class="banana-side"></div><div class="banana-top">BANANA SPACE</div></button>
+        </div>
+
+        <div class="stats">
+          <div class="pill">Key Clicks: <span id="clicks">0</span></div>
+          <div class="pill">Combo: <span id="combo">0</span></div>
+        </div>
+
+        <div class="slider-box">
+          Volume
+          <input id="volume" type="range" min="0" max="100" value="80">
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="wax-title">🧈 Wax Bar</div>
+        <div class="wax-desc">Press for crackly wax + soft squish.</div>
+
+        <div class="wax-block" id="waxBlock">
+          <div class="wax-layer one"></div>
+          <div class="wax-layer two"></div>
+          <div class="wax-layer three"></div>
+          <div class="wax-layer four"></div>
+          <div class="wax-layer five"></div>
+          <div class="wax-press"></div>
+          <div class="crack"></div>
+        </div>
+
+        <div class="wax-count">Wax Presses: <span id="waxCount">0</span></div>
+      </div>
+    </div>
+
+    <div class="help">
+      Keyboard: Q W E R T A S D F Z X C Space. Press Enter or Shift for wax.
+    </div>
+  </div>
+
+  <script>
+    let audioCtx = null;
+    let clicks = 0;
+    let combo = 0;
+    let waxPresses = 0;
+    let lastClickTime = 0;
+
+    const keys = document.querySelectorAll(".banana-key");
+    const waxBlock = document.getElementById("waxBlock");
+    const clicksText = document.getElementById("clicks");
+    const comboText = document.getElementById("combo");
+    const waxCountText = document.getElementById("waxCount");
+    const volumeSlider = document.getElementById("volume");
+
+    function startAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+    }
+
+    function volume() {
+      return Number(volumeSlider.value) / 100;
+    }
+
+    function makeNoiseBuffer(duration) {
+      const sampleRate = audioCtx.sampleRate;
+      const length = Math.floor(sampleRate * duration);
+      const buffer = audioCtx.createBuffer(1, length, sampleRate);
+      const data = buffer.getChannelData(0);
+
+      for (let i = 0; i < length; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+
+      return buffer;
+    }
+
+    function makeCrackleBuffer(duration, density) {
+      const sampleRate = audioCtx.sampleRate;
+      const length = Math.floor(sampleRate * duration);
+      const buffer = audioCtx.createBuffer(1, length, sampleRate);
+      const data = buffer.getChannelData(0);
+
+      for (let i = 0; i < length; i++) {
+        data[i] = 0;
+      }
+
+      const pops = Math.floor(duration * density);
+
+      for (let p = 0; p < pops; p++) {
+        const pos = Math.floor(Math.random() * length);
+        const strength = 0.35 + Math.random() * 0.65;
+        const popLength = 10 + Math.floor(Math.random() * 30);
+
+        for (let j = 0; j < popLength && pos + j < length; j++) {
+          const fade = 1 - j / popLength;
+          data[pos + j] += (Math.random() * 2 - 1) * strength * fade;
+        }
+      }
+
+      return buffer;
+    }
+
+    function playNoise(start, duration, gainValue, filterType, freq, q, panValue) {
+      const source = audioCtx.createBufferSource();
+      const gain = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+      const panner = audioCtx.createStereoPanner();
+
+      source.buffer = makeNoiseBuffer(duration);
+
+      filter.type = filterType;
+      filter.frequency.setValueAtTime(freq, start);
+      filter.Q.setValueAtTime(q, start);
+
+      panner.pan.setValueAtTime(panValue, start);
+
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(gainValue, start + 0.004);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(panner);
+      panner.connect(audioCtx.destination);
+
+      source.start(start);
+      source.stop(start + duration + 0.02);
+    }
+
+    function playCrackle(start, duration, gainValue, freq, q, panValue) {
+      const source = audioCtx.createBufferSource();
+      const gain = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+      const panner = audioCtx.createStereoPanner();
+
+      source.buffer = makeCrackleBuffer(duration, 700);
+
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(freq, start);
+      filter.Q.setValueAtTime(q, start);
+
+      panner.pan.setValueAtTime(panValue, start);
+
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(gainValue, start + 0.003);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(panner);
+      panner.connect(audioCtx.destination);
+
+      source.start(start);
+      source.stop(start + duration + 0.02);
+    }
+
+    function playThock(start, pitch, gainValue, panValue) {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+      const panner = audioCtx.createStereoPanner();
+
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(95 * pitch, start);
+      osc.frequency.exponentialRampToValueAtTime(42 * pitch, start + 0.11);
+
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(420, start);
+
+      panner.pan.setValueAtTime(panValue, start);
+
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(gainValue, start + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.16);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(panner);
+      panner.connect(audioCtx.destination);
+
+      osc.start(start);
+      osc.stop(start + 0.18);
+    }
+
+    function playKeySound() {
+      startAudio();
+
+      const now = audioCtx.currentTime;
+      const vol = volume();
+      const pan = (Math.random() - 0.5) * 0.5;
+      const pitch = 0.88 + Math.random() * 0.22;
+
+      playCrackle(now, 0.026, 0.36 * vol, 4200 * pitch, 8, pan);
+      playNoise(now + 0.004, 0.035, 0.16 * vol, "bandpass", 2600 * pitch, 5, pan);
+      playThock(now + 0.006, pitch, 0.26 * vol, pan);
+      playNoise(now + 0.018, 0.09, 0.09 * vol, "lowpass", 650, 0.7, pan);
+      playCrackle(now + 0.065, 0.018, 0.13 * vol, 3200 * pitch, 7, pan);
+    }
+
+    function playWaxSound() {
+      startAudio();
+
+      const now = audioCtx.currentTime;
+      const vol = volume();
+      const pan = (Math.random() - 0.5) * 0.35;
+      const pitch = 0.85 + Math.random() * 0.25;
+
+      playThock(now, pitch * 0.7, 0.35 * vol, pan);
+      playNoise(now + 0.01, 0.18, 0.18 * vol, "lowpass", 520, 0.7, pan);
+      playCrackle(now + 0.035, 0.055, 0.38 * vol, 3600 * pitch, 9, pan);
+      playCrackle(now + 0.095, 0.06, 0.22 * vol, 2500 * pitch, 6, pan);
+      playCrackle(now + 0.145, 0.04, 0.12 * vol, 5100 * pitch, 10, pan);
+    }
+
+    function spawnSpark(x, y, type) {
+      const spark = document.createElement("div");
+      spark.className = "spark";
+
+      if (type === "wax") {
+        spark.textContent = ["🧈", "💥", "✨"][Math.floor(Math.random() * 3)];
+      } else {
+        spark.textContent = ["🍌", "✨", "💛"][Math.floor(Math.random() * 3)];
+      }
+
+      spark.style.left = x + "px";
+      spark.style.top = y + "px";
+      document.body.appendChild(spark);
+
+      setTimeout(function() {
+        spark.remove();
+      }, 520);
+    }
+
+    function updateCombo() {
+      const now = Date.now();
+
+      if (now - lastClickTime < 430) {
+        combo++;
+      } else {
+        combo = 1;
+      }
+
+      lastClickTime = now;
+      comboText.textContent = combo;
+    }
+
+    function pressKey(button) {
+      playKeySound();
+
+      clicks++;
+      clicksText.textContent = clicks;
+      updateCombo();
+
+      button.classList.add("pressed");
+
+      const rect = button.getBoundingClientRect();
+      spawnSpark(rect.left + rect.width / 2, rect.top + rect.height / 2, "banana");
+
+      setTimeout(function() {
+        button.classList.remove("pressed");
+      }, 85);
+    }
+
+    function pressWax() {
+      playWaxSound();
+
+      waxPresses++;
+      waxCountText.textContent = waxPresses;
+
+      waxBlock.classList.add("pressed");
+
+      const rect = waxBlock.getBoundingClientRect();
+      spawnSpark(rect.left + rect.width / 2, rect.top + rect.height / 3, "wax");
+
+      setTimeout(function() {
+        waxBlock.classList.remove("pressed");
+      }, 120);
+    }
+
+    keys.forEach(function(button) {
+      button.addEventListener("mousedown", function() {
+        pressKey(button);
+      });
+
+      button.addEventListener("touchstart", function(e) {
+        e.preventDefault();
+        pressKey(button);
+      });
+    });
+
+    waxBlock.addEventListener("mousedown", function() {
+      pressWax();
+    });
+
+    waxBlock.addEventListener("touchstart", function(e) {
+      e.preventDefault();
+      pressWax();
+    });
+
+    document.addEventListener("keydown", function(e) {
+      startAudio();
+
+      let keyName = e.key.toUpperCase();
+
+      if (e.code === "Space") {
+        keyName = "SPACE";
+      }
+
+      const button = document.querySelector('[data-key="' + keyName + '"]');
+
+      if (button && !e.repeat) {
+        pressKey(button);
+      }
+
+      if ((e.key === "Enter" || e.key === "Shift") && !e.repeat) {
+        pressWax();
+      }
+    });
+
+    document.body.addEventListener("click", startAudio, { once: true });
+  </script>
+</body>
+</html>
